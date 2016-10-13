@@ -2,33 +2,42 @@ import math
 
 num_qubit = 0
 
+
 def applyCNOT(q1, q2):
-  applyH(q2)
-  applyCPhase(math.pi, q1, q2)
-  applyH(q2)
+    applyH(q2)
+    applyCPhase(q1, q2)
+    applyH(q2)
+
 
 def applyH(q):
-  raise "to be implemented"
+    raise NotImplementedError
 
-def applyRz(theta, q):
-  raise "to be implemented"
 
-def applyRx(theta, q):
-  raise "to be implemented"
+def applyRz(theta=math.pi, q):
+    raise NotImplementedError
+
+
+def applyRx(theta=math.pi, q):
+    raise NotImplementedError
+
+
+def applyCPhase(theta=math.pi, q1, q2):
+    raise NotImplementedError
+
 
 def allocateQubit(init_val):
-  print("this should allocate and initialise a qubit")
-  num_qubit = num_qubit + 1
-  return num_qubit
+    global num_qubit
+    print("this should allocate and initialise a qubit")
+    num_qubit = num_qubit + 1
+    return num_qubit
+
 
 def measure(qubit):
-  raise " implement measure "
+    raise NotImplementedError
+
 
 def measureQubits(qubits):
-  result = []
-  for q in qubits:
-    result.append(measure(q))
-
-  return result
-
-
+    result = []
+    for q in qubits:
+        result.append(measure(q))
+    return result

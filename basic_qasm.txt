@@ -1,0 +1,5 @@
+qubit 	q0
+qubit 	q1
+
+h       q0
+cnot	q0,q1

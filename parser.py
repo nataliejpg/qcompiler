@@ -1,27 +1,52 @@
+# TODO: make so it allocates qubit in correct state
+# TODO: measure multiple qubits
+
+
 import re
-
-pattern1 = '("a-zA-Z-"+)\s+("a-zA-Z0-9"+)'
-pattern2 = "..."
-pattern_arg1 = "..."
-
-def parse(filename):
-  qubits = {}
-  f = open(filename)
-  for line in f:
-    m = re.search(pattern2, line)
-    if len(m) == 1:
-      if m[0][0] == "cnot":
-        applyCNOT(qubits[m[0][1]], qubits[m[0][2]])
-      if m[0][0] == "qubit":
-        qubits[m[0][1]] = allocateQubit(int(m[0][2])
-        print("qubit allocated")
-    else:
-      n = re.search(pattern1, line)
-      if len(m) == 1:
-        if m[0][0] == "h":
-          applyH(qubits[m[0][1]])
-        if m[0][0] == "measure":
-          result = measure(qubits[m[0][1]])
-          print(result)
+from gatemon import applyCNOT, applyRz, applyRx, applyH
+from gatemon import applyCPhase, allocateQubit, measure
 
 
+assign_qubit_pattern = 'qubit\s+([a-z]\d)'
+two_qubit_pattern = '([-\w]+)\s+([a-z]\d),([a-z]\d)'
+single_qubit_pattern = '(\w+)\s+([a-z]\d)'
+
+
+def parse_qasm(filename):
+    qubits = {}
+    f = open(filename)
+    for line in f:
+        print(line)
+        m = re.search(assign_qubit_pattern, line)
+        if m is not None:
+            qubit = m.group(1)
+            qubits[qubit] = allocateQubit(0)
+            continue
+        m = None
+        m = re.search(two_qubit_pattern, line)
+        if m is not None:
+            gate = m.group(1)
+            qubit1 = m.group(2)
+            qubit2 = m.group(3)
+            if gate.lower() == 'cnot':
+                applyCNOT(qubit1, qubit2)
+            else:
+                applyCPhase(qubit1, qubit2)
+            continue
+        m = None
+        m = re.search(single_qubit_pattern, line)
+        if m is not None:
+            gate = m.group(1)
+            print(gate.lower())
+            qubit = m.group(2)
+            if gate.lower() == 'h':
+                applyH(qubit)
+            elif gate.lower == 'x':
+                applyRx(qubit)
+            elif gate.lower == 'z':
+                applyRz(qubit)
+            elif gate.lower() == 'measure':
+                result = measure(qubit)
+                print(result)
+            else:
+                raise NotImplementedError('single qubit gate not implementable')
